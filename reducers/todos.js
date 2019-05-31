@@ -1,7 +1,11 @@
 const todos = (state = [], action) => {
     switch (action.type) {
         case 'ADD_TODO':
-            let lastId = state[state.length - 1]['id'];
+            let lastTodo = state[state.length - 1];
+            let lastId = 0;
+            if (lastTodo !== undefined) {
+                lastId = lastTodo['id'];
+            }
             return [
                 ...state,
                 {
