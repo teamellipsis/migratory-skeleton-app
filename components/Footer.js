@@ -23,43 +23,34 @@ const styles = {
 };
 
 class Footer extends React.Component {
-    state = {
-        value: 0,
-    };
-
-    handleChange = (event, value) => {
-        this.setState({ value });
-        let filter = this.getFilter(value);
+    handleChange = (event, filter) => {
         this.props.dispatch(setVisibilityFilter(filter));
     };
 
-    getFilter = (value) => {
-        switch (value) {
-            case 0:
-                return VisibilityFilters.SHOW_ALL;
-            case 1:
-                return VisibilityFilters.SHOW_ACTIVE;
-            case 2:
-                return VisibilityFilters.SHOW_COMPLETED;
-            default:
-                throw new Error('Unknown filter');
-        }
-    }
-
     render() {
-        const { classes } = this.props;
-        const { value } = this.state;
-
+        const { classes, filter } = this.props;
         return (
             <AppBar position="fixed" color="primary" className={classes.appBar}>
                 <BottomNavigation
-                    value={value}
+                    value={filter}
                     onChange={this.handleChange}
                     showLabels
                 >
-                    <BottomNavigationAction label="All" icon={<IndeterminateCheckBox />} />
-                    <BottomNavigationAction label="Active" icon={<CheckBoxOutlineBlank />} />
-                    <BottomNavigationAction label="Completed" icon={<CheckBox />} />
+                    <BottomNavigationAction
+                        value={VisibilityFilters.SHOW_ALL}
+                        label="All"
+                        icon={<IndeterminateCheckBox />}
+                    />
+                    <BottomNavigationAction
+                        value={VisibilityFilters.SHOW_ACTIVE}
+                        label="Active"
+                        icon={<CheckBoxOutlineBlank />}
+                    />
+                    <BottomNavigationAction
+                        value={VisibilityFilters.SHOW_COMPLETED}
+                        label="Completed"
+                        icon={<CheckBox />}
+                    />
                 </BottomNavigation>
             </AppBar>
         );
@@ -68,6 +59,11 @@ class Footer extends React.Component {
 
 Footer.propTypes = {
     classes: PropTypes.object.isRequired,
+    filter: PropTypes.string.isRequired,
 };
 
-export default connect()(withStyles(styles)(Footer));
+const mapStateToProps = (state) => ({
+    filter: state.visibilityFilter
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(Footer));
