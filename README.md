@@ -12,11 +12,11 @@ $ cd demo-migratory-redux-app
 Run development
 ``` bash
 $ npm install
-$ npm run dev
+$ npm run dev-server
 ```
 Run production
 ``` bash
 $ npm install --production
 $ npm run build
-$ npm run start
+$ npm run server
 ```
