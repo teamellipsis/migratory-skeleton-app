@@ -1,0 +1,10 @@
+{
+    "verbose": true,
+    "watch": [
+        "server.js",
+        "app_state.js"
+    ],
+    "env": {
+        "NODE_ENV": "development"
+    }
+}
