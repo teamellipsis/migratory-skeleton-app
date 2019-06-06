@@ -53,7 +53,7 @@ class FloatingDock extends React.Component {
                 defaultPosition={floatingDock.position}
             >
                 <Fab
-                    style={{ zIndex: 2147483647, backgroundColor: '#00b8ff80' }}
+                    style={{ zIndex: 2147483647, backgroundColor: '#00b8ff80', position: 'fixed' }}
                     aria-label="Add"
                     onClick={this.handleOnClick}
                     onContextMenu={this.handleOnContextMenu}
