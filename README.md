@@ -18,5 +18,8 @@ Run production
 ``` bash
 $ npm install --production
 $ npm run build
+# On UNIX
 $ npm run server
+# On Windows
+$ npm run server_win
 ```
