@@ -8,6 +8,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import FloatingDock from './FloatingDock';
 
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import platformReducer from '../reducers';
+
 const styles = {
     fullList: {
         width: 'auto',
@@ -22,6 +26,11 @@ class ControlPanel extends React.Component {
         { key: 'saveAppState', title: 'Save app state' },
         { key: 'closeApp', title: 'Close app' },
     ];
+
+    constructor(props) {
+        super(props);
+        this.platformStore = createStore(platformReducer, props.platformState);
+    }
 
     toggleDrawer = (open) => () => {
         this.setState({
@@ -42,13 +51,18 @@ class ControlPanel extends React.Component {
     };
 
     saveAppState = () => {
+        const state = {
+            _appState: this.props.appStore.getState(),
+            _platformState: this.platformStore.getState(),
+        }
+
         fetch('/__save', {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             method: 'post',
-            body: JSON.stringify(this.props.store.getState()),
+            body: JSON.stringify(state),
         }).then((res) => {
             this.handleClose();
         });
@@ -57,7 +71,7 @@ class ControlPanel extends React.Component {
     closeApp = () => {
         fetch('/__close', {
             method: 'post',
-        }).then((res)=>{
+        }).then((res) => {
             fetch('/__ping', {
                 method: 'get',
             });
@@ -68,7 +82,7 @@ class ControlPanel extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <React.Fragment>
+            <Provider store={this.platformStore}>
                 <FloatingDock open={this.handleOpen} />
                 <Drawer
                     anchor="bottom"
@@ -90,14 +104,15 @@ class ControlPanel extends React.Component {
                         </div>
                     </div>
                 </Drawer>
-            </React.Fragment>
+            </Provider>
         );
     }
 }
 
 ControlPanel.propTypes = {
     classes: PropTypes.object.isRequired,
-    store: PropTypes.object.isRequired,
+    appStore: PropTypes.object.isRequired,
+    platformState: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(ControlPanel);

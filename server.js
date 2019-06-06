@@ -41,7 +41,8 @@ nextApp.prepare().then(() => {
     });
 
     app.get('*', (req, res) => {
-        req._appState = appState.get();
+        req._appState = appState.get()._appState;
+        req._platformState = appState.get()._platformState;
         handler(req, res);
     });
 

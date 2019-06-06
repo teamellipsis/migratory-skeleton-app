@@ -17,21 +17,22 @@ class CustomApp extends App {
     static async getInitialProps({ Component, ctx }) {
         let pageProps = {};
         let preloadedState = ctx.req._appState;
+        let platformState = ctx.req._platformState;
 
         if (Component.getInitialProps) {
             pageProps = await Component.getInitialProps(ctx);
         }
 
-        return { pageProps, preloadedState };
+        return { pageProps, preloadedState, platformState };
     }
 
     render() {
-        const { Component, pageProps } = this.props;
+        const { Component, pageProps, platformState } = this.props;
         let store = this.store;
         return (
             <Container>
+                <ControlPanel appStore={store} platformState={platformState} />
                 <Provider store={store}>
-                    <ControlPanel store={store} />
                     <Component {...pageProps} />
                 </Provider>
             </Container>
@@ -41,6 +42,7 @@ class CustomApp extends App {
 
 CustomApp.propTypes = {
     preloadedState: PropTypes.object.isRequired,
+    platformState: PropTypes.object.isRequired,
 };
 
 export default CustomApp;
