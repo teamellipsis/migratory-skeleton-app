@@ -40,6 +40,23 @@ nextApp.prepare().then(() => {
         });
     });
 
+    app.post('/__call', (req, res) => {
+        const backend = require('./backend/index');
+
+        let reqBody = req.body;
+        let args = reqBody.args;
+        let method = reqBody.method;
+        let argc = Object.keys(args).length;
+        let argsArray = [];
+
+        for (let i = 0; i < argc; i++) {
+            argsArray.push(args[i]);
+        }
+
+        const result = backend[method](...argsArray);
+        res.send(result);
+    });
+
     app.get('*', (req, res) => {
         req._appState = appState.get()._appState;
         req._platformState = appState.get()._platformState;
