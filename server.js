@@ -3,12 +3,16 @@ const server = require('http').Server(app);
 const next = require('next');
 var appState = require('./app_state.js');
 const fs = require('fs');
+const path = require('path');
 const bodyParser = require('body-parser');
+const backend = require('./backend/index');
 
 const dev = process.env.NODE_ENV !== 'production';
 const dir = __dirname;
 const nextApp = next({ dev, dir });
 const handler = nextApp.getRequestHandler();
+
+const PATH_TO_STATE = path.join(__dirname, 'state');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,7 +29,7 @@ nextApp.prepare().then(() => {
 
     app.post('/__close', (req, res) => {
         let appStates = appState.get();
-        fs.writeFile(__dirname + "/state", JSON.stringify(appStates), function (err) {
+        fs.writeFile(PATH_TO_STATE, JSON.stringify(appStates), function (err) {
             if (err) {
                 res.status(500);
                 res.send();
@@ -41,8 +45,6 @@ nextApp.prepare().then(() => {
     });
 
     app.post('/__call', (req, res) => {
-        const backend = require('./backend/index');
-
         let reqBody = req.body;
         let args = reqBody.args;
         let method = reqBody.method;
@@ -63,15 +65,32 @@ nextApp.prepare().then(() => {
         handler(req, res);
     });
 
-    server.listen(3000, err => {
+    server.on('error', (error) => {
+        process.send({ msg: "server_error", error });
+        throw error;
+    });
+
+    server.listen(0, err => {
+        if (typeof process.send === 'function') {
+            // For Electron
+            process.send({ msg: "listening", server: server.address() });
+        } else {
+            // For Android platform
+            let obj = { time: (new Date().getTime()), server: server.address() }
+            fs.writeFile(
+                path.join(__dirname, 'SERVER'),
+                JSON.stringify(obj),
+                (err) => { }
+            );
+        }
         if (err) throw err;
-        console.log('> Ready on http://localhost:3000');
+        console.log(`> Ready on http://localhost:${server.address().port}`);
     });
 });
 
-fs.exists(__dirname + "/state", (exists) => {
+fs.exists(PATH_TO_STATE, (exists) => {
     if (exists) {
-        fs.readFile(__dirname + "/state", (err, state) => {
+        fs.readFile(PATH_TO_STATE, (err, state) => {
             if (err) throw err;
             appState.set(JSON.parse(state));
         });
