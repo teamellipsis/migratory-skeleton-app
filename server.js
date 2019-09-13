@@ -1,9 +1,38 @@
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
+const logFile = fs.createWriteStream(path.join(__dirname, 'debug.log'), { flags: 'a' });
+
+console.error = (msg, ...optionalParams) => {
+    logFile.write(util.format(msg, ...optionalParams) + '\n');
+    process.stderr.write(util.format(msg, ...optionalParams) + '\n');
+};
+
+console.warn = (msg, ...optionalParams) => {
+    logFile.write(util.format(msg, ...optionalParams) + '\n');
+    process.stdout.write(util.format(msg, ...optionalParams) + '\n');
+};
+
+console.info = (msg, ...optionalParams) => {
+    logFile.write(util.format(msg, ...optionalParams) + '\n');
+    process.stdout.write(util.format(msg, ...optionalParams) + '\n');
+};
+
+console.log = (msg, ...optionalParams) => {
+    logFile.write(util.format(msg, ...optionalParams) + '\n');
+    process.stdout.write(util.format(msg, ...optionalParams) + '\n');
+};
+
+console.debug = (msg, optionalParams) => {
+    logFile.write(util.format(msg, ...optionalParams) + '\n');
+    process.stdout.write(util.format(msg, ...optionalParams) + '\n');
+};
+
+
 const app = require('express')();
 const server = require('http').Server(app);
 const next = require('next');
 var appState = require('./app_state.js');
-const fs = require('fs');
-const path = require('path');
 const bodyParser = require('body-parser');
 const backend = require('./backend/index');
 
