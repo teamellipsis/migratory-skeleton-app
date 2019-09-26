@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-const logFile = fs.createWriteStream(path.join(__dirname, 'debug.log'), { flags: 'a' });
+const logFile = fs.createWriteStream(path.join(__dirname, 'debug.log'), { flags: 'a', autoClose: true });
 
 console.error = (msg, ...optionalParams) => {
     logFile.write(util.format(msg, ...optionalParams) + '\n');
@@ -95,7 +95,10 @@ nextApp.prepare().then(() => {
     });
 
     server.on('error', (error) => {
-        process.send({ msg: "server_error", error });
+        if (typeof process.send === 'function') {
+            process.send({ msg: "server_error", error });
+        }
+        console.error(error);
         throw error;
     });
 
