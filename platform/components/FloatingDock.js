@@ -44,6 +44,16 @@ class FloatingDock extends React.Component {
 
     render() {
         const { floatingDock } = this.props;
+        let bounds = false;
+        if (this.floatingDockRef.current !== null) {
+            const rect = this.floatingDockRef.current.getBoundingClientRect();
+            bounds = {
+                left: -(rect.width / 2),
+                top: -(rect.height / 2),
+                right: window.innerWidth - (rect.width / 2),
+                bottom: window.innerHeight - (rect.height / 2)
+            };
+        }
         return (
             <Draggable
                 allowAnyClick
@@ -51,6 +61,7 @@ class FloatingDock extends React.Component {
                 onStart={this.handleOnStart}
                 onStop={this.handleOnStop}
                 defaultPosition={floatingDock.position}
+                bounds={bounds}
             >
                 <Fab
                     style={{ zIndex: 2147483647, backgroundColor: '#00b8ff80', position: 'fixed' }}
@@ -69,6 +80,8 @@ class FloatingDock extends React.Component {
 FloatingDock.propTypes = {
     open: PropTypes.func.isRequired,
     handleOnStop: PropTypes.func.isRequired,
+    changeFloatingDockPosition: PropTypes.func.isRequired,
+    floatingDock: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -76,7 +89,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    handleOnStop: position => dispatch(changeFloatingDockPosition(position))
+    handleOnStop: position => dispatch(changeFloatingDockPosition(position)),
+    changeFloatingDockPosition: position => dispatch(changeFloatingDockPosition(position)),
 });
 
 export default connect(
