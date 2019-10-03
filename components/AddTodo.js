@@ -56,8 +56,10 @@ class AddTodo extends React.Component {
             <AppBar position="fixed">
                 <Toolbar>
                     <Typography variant="h6" color="inherit" noWrap>
-                        Todo
-                </Typography>
+                        Simple Todo
+                    </Typography>
+                </Toolbar>
+                <Toolbar>
                     <div className={classes.grow} />
                     <div className={classes.search}>
                         <InputBase

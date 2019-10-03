@@ -34,7 +34,7 @@ const server = require('http').Server(app);
 const next = require('next');
 var appState = require('./app_state.js');
 const bodyParser = require('body-parser');
-const backend = require('./backend/index');
+const backend = require('./daemon/index');
 
 const dev = process.env.NODE_ENV !== 'production';
 const dir = __dirname;

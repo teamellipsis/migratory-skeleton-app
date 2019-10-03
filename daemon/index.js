@@ -9,3 +9,7 @@ module.exports.getOsDetails = function () {
         totalmem: os.totalmem(),
     }
 }
+
+module.exports.getVersions = function () {
+    return process.versions;
+}

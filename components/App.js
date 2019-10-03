@@ -7,12 +7,12 @@ import TodoList from './TodoList';
 
 const styles = {
     topPadding: {
-        paddingTop: 56,
+        paddingTop: 56 * 2,
         "@media (min-width:0px) and (orientation: landscape)": {
-            paddingTop: 48,
+            paddingTop: 48 * 2,
         },
         "@media (min-width:600px)": {
-            paddingTop: 64,
+            paddingTop: 64 * 2,
         },
     },
     bottomPadding: {

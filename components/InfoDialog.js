@@ -49,6 +49,8 @@ class InfoDialog extends React.Component {
         arch: 'Pending...',
         hostname: 'Pending...',
         totalmem: 'Pending...',
+        node: 'Pending...',
+        v8: 'Pending...',
     }
 
     constructor(props) {
@@ -64,6 +66,15 @@ class InfoDialog extends React.Component {
         }).catch((err) => {
             console.log(err);
         });
+
+        this.getVersions().then((versions) => {
+            this.setState({
+                node: versions.node,
+                v8: versions.v8,
+            });
+        }).catch((err) => {
+            console.log(err);
+        });
     }
 
     handleClose = () => {
@@ -72,6 +83,9 @@ class InfoDialog extends React.Component {
 
     @Daemon()
     getOsDetails() { }
+
+    @Daemon()
+    getVersions() { }
 
     render() {
         return (
@@ -104,6 +118,12 @@ class InfoDialog extends React.Component {
                     </Typography>
                     <Typography gutterBottom>
                         System memory (bytes) : {this.state.totalmem}
+                    </Typography>
+                    <Typography gutterBottom>
+                        Node.js version : {this.state.node}
+                    </Typography>
+                    <Typography gutterBottom>
+                        V8 version : {this.state.v8}
                     </Typography>
                 </DialogContent>
             </Dialog>
