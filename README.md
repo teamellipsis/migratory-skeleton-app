@@ -23,3 +23,12 @@ $ npm run server
 # On Windows
 $ npm run server_win
 ```
+
+## Build
+```bash
+# Without specifing app name. This will use package.json -> name as the app name.
+$ npm run release
+# Or specify app name as first argument.
+$ npm run release -- "Simple Todo"
+```
+Build file will put into `build` directory.
