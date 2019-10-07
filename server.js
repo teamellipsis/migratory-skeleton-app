@@ -56,6 +56,23 @@ nextApp.prepare().then(() => {
         res.send();
     });
 
+    app.post('/__save_close', (req, res) => {
+        let appStates = req.body;
+        fs.writeFile(PATH_TO_STATE, JSON.stringify(appStates), function (err) {
+            if (err) {
+                res.status(500);
+                res.send();
+                console.log('Fail to write state');
+            } else {
+                res.send();
+                server.close(() => {
+                    console.log('Server closed');
+                    process.exit(0);
+                });
+            }
+        });
+    });
+
     app.post('/__close', (req, res) => {
         let appStates = appState.get();
         fs.writeFile(PATH_TO_STATE, JSON.stringify(appStates), function (err) {

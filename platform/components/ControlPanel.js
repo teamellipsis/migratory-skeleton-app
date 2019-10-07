@@ -23,8 +23,9 @@ class ControlPanel extends React.Component {
         bottom: false,
     };
     options = [
-        { key: 'saveAppState', title: 'Save app state' },
-        { key: 'closeApp', title: 'Close app' },
+        { key: 'saveAppState', title: 'Save app' },
+        { key: 'saveAndClose', title: 'Save & close app' },
+        { key: 'closeApp', title: 'Close at last saved point' },
     ];
 
     constructor(props) {
@@ -64,6 +65,30 @@ class ControlPanel extends React.Component {
             method: 'post',
             body: JSON.stringify(state),
         }).then((res) => {
+            fetch('/__ping', {
+                method: 'get',
+            });
+            this.handleClose();
+        });
+    }
+
+    saveAndClose = () => {
+        const state = {
+            _appState: this.props.appStore.getState(),
+            _platformState: this.platformStore.getState(),
+        }
+
+        fetch('/__save_close', {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'post',
+            body: JSON.stringify(state),
+        }).then((res) => {
+            fetch('/__ping', {
+                method: 'get',
+            });
             this.handleClose();
         });
     }
