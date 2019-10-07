@@ -5,23 +5,28 @@ function callToDaemon(target, propertyKey, propertyDescriptor) {
                 args: arguments,
                 method: propertyKey,
             }
-            fetch('/__call', {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                method: 'post',
-                body: JSON.stringify(body),
-            }).then((res) => {
-                res.json().then((body) => {
-                    return resolve(body);
+            // Only run on browser side. Not for server side.
+            if (typeof fetch === 'function') {
+                fetch('/__call', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    method: 'post',
+                    body: JSON.stringify(body),
+                }).then((res) => {
+                    res.json().then((body) => {
+                        return resolve(body);
+                    }).catch((err) => {
+                        return reject(err);
+                    });
+
                 }).catch((err) => {
                     return reject(err);
                 });
-
-            }).catch((err) => {
-                return reject(err);
-            });
+            } else {
+                return reject();
+            }
         });
     }
 }
