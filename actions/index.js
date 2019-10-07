@@ -1,14 +1,9 @@
-export const addTodo = text => ({
-  type: 'ADD_TODO',
-  text
-})
+import Action from './actions';
 
-export const setVisibilityFilter = filter => ({
-  type: 'SET_VISIBILITY_FILTER',
-  filter
-})
+export const openInfoDialog = () => ({
+  type: Action.INFO_DIALOG_OPEN,
+});
 
-export const toggleTodo = id => ({
-  type: 'TOGGLE_TODO',
-  id
-})
+export const closeInfoDialog = () => ({
+  type: Action.INFO_DIALOG_CLOSE,
+});

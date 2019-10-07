@@ -95,15 +95,9 @@ class InfoDialog extends React.Component {
                 open={this.props.open}
             >
                 <DialogTitle onClose={this.handleClose}>
-                    App info
+                    Info
                 </DialogTitle>
                 <DialogContent>
-                    <Typography gutterBottom>
-                        App name : Todo app
-                     </Typography>
-                    <Typography gutterBottom>
-                        App version : 0.1-alpha
-                    </Typography>
                     <Typography gutterBottom>
                         Platform (operating system) : {this.state.platform}
                     </Typography>

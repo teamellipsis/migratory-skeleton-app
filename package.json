@@ -1,15 +1,12 @@
 {
-  "name": "mobile-agent-ssr",
+  "name": "migratory-skeleton-app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "dev": "next",
     "build": "next build",
-    "start": "next start",
     "dev-server": "nodemon server.js",
     "server": "NODE_ENV=production node server.js",
-    "server_win": "set NODE_ENV=production&&node server.js",
+    "server-win": "set NODE_ENV=production&&node server.js",
     "release": "node platform/scripts/build.js"
   },
   "author": "",
