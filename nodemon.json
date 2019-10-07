@@ -3,7 +3,7 @@
     "watch": [
         "server.js",
         "app_state.js",
-        "backend/index.js"
+        "daemon/*"
     ],
     "env": {
         "NODE_ENV": "development"

@@ -13,6 +13,14 @@ Run development
 ``` bash
 $ npm install
 $ npm run dev-server
+# Open in browser http://localhost:3000
+```
+``` bash
+# If port 3000 busy(Address already in use) run in different port as below
+# On UNIX
+$ PORT=3001 npm run dev-server
+# On Windows
+$ set PORT=3001 && npm run dev-server
 ```
 Run production
 ``` bash

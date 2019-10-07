@@ -102,7 +102,9 @@ nextApp.prepare().then(() => {
         throw error;
     });
 
-    server.listen(0, err => {
+    let port = 0;
+    if (dev) if (process.env.PORT) port = process.env.PORT; else port = 3000;
+    server.listen(port, err => {
         if (typeof process.send === 'function') {
             // For Electron
             process.send({ msg: "listening", server: server.address() });
