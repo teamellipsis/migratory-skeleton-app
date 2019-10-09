@@ -15,8 +15,8 @@ this.getVersions = function () {
 }
 
 this.getCount = () => {
-    if (!count) count = 0;
-    return count;
+    if (!this.count) this.count = 0;
+    return this.count;
 };
 
 this.setCount = (count) => {
