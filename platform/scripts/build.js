@@ -72,6 +72,7 @@ function createZip() {
             filename.startsWith(".git") ||
             filename.endsWith(".log") ||
             filename === "state" ||
+            filename === "state_daemon" ||
             filename === "SERVER"
 
         if (filter) {
