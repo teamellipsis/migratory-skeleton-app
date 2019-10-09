@@ -2,10 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 import Zoom from '@material-ui/core/Zoom';
 import Fab from '@material-ui/core/Fab';
 import UpIcon from '@material-ui/icons/KeyboardArrowUp';
 import DownIcon from '@material-ui/icons/KeyboardArrowDown';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Badge from '@material-ui/core/Badge';
 import InfoDialog from './InfoDialog';
 
 import { connect } from 'react-redux';
@@ -27,9 +32,24 @@ const styles = theme => ({
         bottom: theme.spacing.unit * 2,
         right: theme.spacing.unit * 2,
     },
+    card: {
+        width: '50vw',
+    },
+    cardRoot: {
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    cardActions: {
+        justifyContent: 'center',
+    },
 });
 
 class App extends React.Component {
+    state = {
+        count: 0,
+        error: false,
+    };
+
     constructor(props) {
         super(props);
         this.fabs = [
@@ -44,6 +64,15 @@ class App extends React.Component {
                 open: true,
             },
         ];
+
+        this.getCount().then((count) => {
+            this.setState({
+                count,
+            });
+        }).catch((err) => {
+            this.signalError();
+            console.log(err);
+        });
     }
 
     onClickUp = () => {
@@ -53,6 +82,55 @@ class App extends React.Component {
     onClickDown = () => {
         this.props.closeInfoDialog();
     };
+
+    handleOnIncrement = () => {
+        this.changeCount(1);
+    };
+
+    handleOnDecrement = () => {
+        this.changeCount(-1);
+    };
+
+    changeCount = (num) => {
+        this.getCount().then((count) => {
+            const newCount = count + num;
+            this.setCount(newCount).then(() => {
+                this.setState({
+                    count: newCount,
+                });
+            }).catch((err) => {
+                this.signalError();
+                console.log(err);
+            });
+        }).catch((err) => {
+            this.signalError();
+            console.log(err);
+        });
+    };
+
+    handleOnReset = () => {
+        this.setCount(0).then(() => {
+            this.setState({
+                count: 0,
+            });
+        }).catch((err) => {
+            this.signalError();
+            console.log(err);
+        });
+    };
+
+    signalError = () => {
+        this.setState({ error: true });
+        setTimeout(() => {
+            this.setState({ error: false });
+        }, 1000);
+    };
+
+    @Daemon()
+    getCount() { }
+
+    @Daemon()
+    setCount(count) { }
 
     render() {
         const { classes, theme, infoDialogOpen } = this.props;
@@ -67,9 +145,30 @@ class App extends React.Component {
                 <Typography variant="h6">
                     {"Edit `components/App.js` or `pages/index.js` and save to reload."}
                 </Typography>
-                {this.fabs.map((fab) => (
+                <Button variant="outlined" color="primary" className={classes.button}>
+                    {"Learn more..."}
+                </Button>
+
+                <div className={classes.cardRoot}>
+                    <Card className={classes.card}>
+                        <CardContent>
+                            <Badge color="secondary" invisible={!this.state.error} variant="dot">
+                                <Typography color="textSecondary" gutterBottom>
+                                    {"Counter: " + this.state.count}
+                                </Typography>
+                            </Badge>
+                        </CardContent>
+                        <CardActions className={classes.cardActions}>
+                            <Button size="small" onClick={this.handleOnIncrement}>+1</Button>
+                            <Button size="small" onClick={this.handleOnDecrement}>-1</Button>
+                            <Button size="small" onClick={this.handleOnReset}>Reset</Button>
+                        </CardActions>
+                    </Card>
+                </div>
+
+                {this.fabs.map((fab, index) => (
                     <Zoom
-                        key={fab.color}
+                        key={index}
                         in={infoDialogOpen === fab.open}
                         timeout={transitionDuration}
                         style={{

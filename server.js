@@ -28,13 +28,43 @@ console.debug = (msg, optionalParams) => {
     process.stdout.write(util.format(msg, ...optionalParams) + '\n');
 };
 
+const PATH_TO_DAEMON_STATE = path.join(__dirname, 'state_daemon');
+let sandbox = {};
+if (fs.existsSync(PATH_TO_DAEMON_STATE)) {
+    let state = fs.readFileSync(PATH_TO_DAEMON_STATE);
+    sandbox = JSON.parse(state);
+}
 
+const daemonCode = fs.readFileSync(path.join(__dirname, 'daemon', 'index.js')).toString();
+const vm = require('vm');
+vm.createContext(sandbox);
+
+const code = `
+((
+    __dirname,
+    __filename,
+    clearImmediate,
+    clearInterval,
+    clearTimeout,
+    console,
+    exports,
+    global,
+    module,
+    process,
+    require,
+    setImmediate,
+    setInterval,
+    setTimeout,
+    __sandbox,
+) => {
+
+const fs = require('fs');
+const path = require('path');
 const app = require('express')();
 const server = require('http').Server(app);
 const next = require('next');
 var appState = require('./app_state.js');
 const bodyParser = require('body-parser');
-const backend = require('./daemon/index');
 
 const dev = process.env.NODE_ENV !== 'production';
 const dir = __dirname;
@@ -42,6 +72,7 @@ const nextApp = next({ dev, dir });
 const handler = nextApp.getRequestHandler();
 
 const PATH_TO_STATE = path.join(__dirname, 'state');
+const PATH_TO_DAEMON_STATE = path.join(__dirname, 'state_daemon');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -64,6 +95,7 @@ nextApp.prepare().then(() => {
                 res.send();
                 console.log('Fail to write state');
             } else {
+                fs.writeFileSync(PATH_TO_DAEMON_STATE, JSON.stringify(__sandbox));
                 res.send();
                 server.close(() => {
                     console.log('Server closed');
@@ -81,6 +113,7 @@ nextApp.prepare().then(() => {
                 res.send();
                 console.log('Fail to write state');
             } else {
+                fs.writeFileSync(PATH_TO_DAEMON_STATE, JSON.stringify(__sandbox));
                 res.send();
                 server.close(() => {
                     console.log('Server closed');
@@ -101,8 +134,17 @@ nextApp.prepare().then(() => {
             argsArray.push(args[i]);
         }
 
-        const result = backend[method](...argsArray);
-        res.send(result);
+        let result = null;
+        let error = null;
+        try {
+            result = this[method](...argsArray);
+        } catch (e) {
+            res.status(500);
+            console.error(e);
+            error = e.toString();
+        } finally {
+            res.send({ result, error });
+        }
     });
 
     app.get('*', (req, res) => {
@@ -135,7 +177,7 @@ nextApp.prepare().then(() => {
             );
         }
         if (err) throw err;
-        console.log(`> Ready on http://localhost:${server.address().port}`);
+        console.log('> Ready on http://localhost:' + server.address().port);
     });
 });
 
@@ -147,3 +189,25 @@ fs.exists(PATH_TO_STATE, (exists) => {
         });
     }
 });
+
+${daemonCode}
+
+})`;
+
+vm.runInContext(code, sandbox)(
+    __dirname,
+    __filename,
+    clearImmediate,
+    clearInterval,
+    clearTimeout,
+    console,
+    exports,
+    global,
+    module,
+    process,
+    require,
+    setImmediate,
+    setInterval,
+    setTimeout,
+    sandbox,
+);

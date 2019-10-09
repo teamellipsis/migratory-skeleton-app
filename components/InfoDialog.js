@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 
-import Daemon from '../platform/decorators/Daemon';
+import Daemon from 'Daemon';
 
 const DialogTitle = withStyles(theme => ({
     root: {

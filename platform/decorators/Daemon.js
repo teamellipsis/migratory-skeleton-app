@@ -16,7 +16,11 @@ function callToDaemon(target, propertyKey, propertyDescriptor) {
                     body: JSON.stringify(body),
                 }).then((res) => {
                     res.json().then((body) => {
-                        return resolve(body);
+                        if (res.status !== 200) {
+                            return reject(body.error);
+                        }
+
+                        return resolve(body.result);
                     }).catch((err) => {
                         return reject(err);
                     });

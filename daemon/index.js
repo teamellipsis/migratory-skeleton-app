@@ -1,6 +1,6 @@
 const os = require('os');
 
-module.exports.getOsDetails = function () {
+this.getOsDetails = function () {
     return {
         arch: os.arch(),
         hostname: os.hostname(),
@@ -10,6 +10,15 @@ module.exports.getOsDetails = function () {
     }
 }
 
-module.exports.getVersions = function () {
+this.getVersions = function () {
     return process.versions;
 }
+
+this.getCount = () => {
+    if (!count) count = 0;
+    return count;
+};
+
+this.setCount = (count) => {
+    this.count = count;
+};
