@@ -35,6 +35,13 @@ if (fs.existsSync(PATH_TO_DAEMON_STATE)) {
     sandbox = JSON.parse(state);
 }
 
+const PATH_TO_STATE = path.join(__dirname, 'state');
+let appStates = { _appState: {}, _platformState: {} };
+if (fs.existsSync(PATH_TO_STATE)) {
+    let state = fs.readFileSync(PATH_TO_STATE);
+    appStates = JSON.parse(state);
+}
+
 const daemonCode = fs.readFileSync(path.join(__dirname, 'daemon', 'index.js')).toString();
 const vm = require('vm');
 vm.createContext(sandbox);
@@ -56,6 +63,7 @@ const code = `
     setInterval,
     setTimeout,
     __sandbox,
+    __appStates,
 ) => {
 
 const fs = require('fs');
@@ -73,6 +81,8 @@ const handler = nextApp.getRequestHandler();
 
 const PATH_TO_STATE = path.join(__dirname, 'state');
 const PATH_TO_DAEMON_STATE = path.join(__dirname, 'state_daemon');
+
+appState.set(__appStates);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -181,15 +191,6 @@ nextApp.prepare().then(() => {
     });
 });
 
-fs.exists(PATH_TO_STATE, (exists) => {
-    if (exists) {
-        fs.readFile(PATH_TO_STATE, (err, state) => {
-            if (err) throw err;
-            appState.set(JSON.parse(state));
-        });
-    }
-});
-
 ${daemonCode}
 
 })`;
@@ -210,4 +211,5 @@ vm.runInContext(code, sandbox)(
     setInterval,
     setTimeout,
     sandbox,
+    appStates,
 );
