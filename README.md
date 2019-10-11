@@ -8,6 +8,19 @@ Use [React Redux](https://react-redux.js.org/) to preserve application's UI stat
 ``` bash
 $ git clone https://github.com/teamellipsis/migratory-skeleton-app
 $ cd migratory-skeleton-app
+
+# Or clone to different directory name
+$ git clone https://github.com/teamellipsis/migratory-skeleton-app <your-project-name>
+$ cd <your-project-name>
+```
+Change remote
+``` bash
+# Remove current origin
+$ git remote remove origin
+# Add your project repository as origin
+$ git remote add origin <your-project-repo-link>
+# Check origin
+$ git remote -v
 ```
 Run development
 ``` bash
