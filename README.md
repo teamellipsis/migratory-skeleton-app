@@ -37,7 +37,6 @@ $ set PORT=3001 && npm run dev-server
 ```
 Run production
 ``` bash
-$ npm install --production
 $ npm run build
 # On UNIX
 $ npm run server
